@@ -1,0 +1,50 @@
+<div class='bot' id='<%= bot.id %>'>
+  <div class='top'>
+    <span class='name'><a target='_blank' href='https://twitter.com/<%= bot.handle %>'><%= bot.name %></a></span>
+    <span class='version'><%= bot.version %></span>
+    <span class='left'>
+      <% var className = bot.running ? 'pause' : 'play' %>
+      <i class='fa fa-<%= className %> playpause'></i>
+      <i class='fa fa-toggle-right run'></i>
+    </span>
+    <span class='right'>
+      <i class='fa fa-cog edit'></i>
+    </span>
+  </div>
+  <% if (bot.lastRun) { %>
+  <div class='countdown'></div>
+  <% } %>
+  <% if (bot.lastEvent) { %>
+    <div class='last'>
+      <% const formattedDate = moment(bot.lastEvent.date).format('MMMM DD YYYY, h:mm a');
+      if (bot.lastEvent.error) {%>
+        Error at <%= formattedDate %>: <%= bot.lastEvent.error %>
+      <% } else if (bot.lastEvent.tweet) { %>
+        <a target='_blank' href='https://twitter.com/usr/statuses/<%= bot.lastEvent.tweet %>'>Tweet at <%= formattedDate %></a>
+      <% } %>
+    </div>
+  <% } %>
+    <% if (bot.configure) { %>
+    <form class='configure' action='javascript:void(0);'>
+    <div>
+      <label for 'interval'>Run interval (minutes)</label>
+      <input type='text' class='config interval' name='interval' value='<%= bot.interval %>'>
+    </div>
+    <% Object.keys(bot.twit).forEach((key) => { %>
+      <div>
+        <label for='<%= key %>'>Twitter <%= key %></label>
+        <input type='text' class='config' name='<%= key %>' value='<%= bot.twit[key] %>'>
+      </div>
+    <% })
+      if (bot.params) {
+        Object.keys(bot.params).forEach((key) => { %>
+          <div>
+            <label for='<%= key %>'><%= key %></label>
+            <input type='text' class='config' name='<%= key %>' value='<%= bot.params[key] %>'>
+          </div>
+        <% })
+      }%>
+      <button>Save</button>
+    </form>
+  <% } %>
+</div>
