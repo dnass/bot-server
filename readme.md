@@ -4,7 +4,7 @@ An Express-based server for deploying and scheduling Twitter bots built with [tw
 
 ## Setup
 
-Configure bot-server with a MongoDB URL and listening port in `env.js`. Place your bots in the `bots` directory of the `botmanager` directory.
+Configure bot-server with a MongoDB URL and listening port in `env.js`. Place your bots in the `bots` directory of the `bot-server` directory.
 
 Install dependencies with `npm install`.
 
