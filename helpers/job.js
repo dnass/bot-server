@@ -58,10 +58,7 @@ function runBot(path, initData) {
       if (msg !== '') {
         const message = JSON.parse(msg);
         if (typeof message.content === 'string')
-          if (message.content === 'kill')
-            bot.kill()
-          else
-            console.log(`${id}: ${message.content}`)
+          console.log(`${id}: ${message.content}`)
         else if (typeof message.content === 'object') {
           const eventData = {
             botId: id,
@@ -76,8 +73,10 @@ function runBot(path, initData) {
             eventData.error = message.content.error;
             bot.kill()
             saveEvent(eventData);
+          } else if (message.content.done) {
+            bot.kill();
           } else {
-            console.log(message.content);
+            console.log(`${id}: ${message.content}`);
           }
         }
       }
