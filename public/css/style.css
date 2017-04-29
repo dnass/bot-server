@@ -144,6 +144,7 @@ label {
   width: 120px;
   text-align: right;
   vertical-align: middle;
+  word-wrap: break-word;
 }
 
 input {
