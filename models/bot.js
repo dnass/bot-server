@@ -11,10 +11,10 @@ var Bot = new Schema({
   handle: String,
   params: Object,
   twit: {
-    consumer_key: {type: String, default: ''},
-    consumer_secret: {type: String, default: ''},
+    access_token_secret: {type: String, default: ''},
     access_token: {type: String, default: ''},
-    access_token_secret: {type: String, default: ''}
+    consumer_secret: {type: String, default: ''},
+    consumer_key: {type: String, default: ''}
   },
   interval: {type: Number, default: 60},
   count: {type: Number, default: 0},

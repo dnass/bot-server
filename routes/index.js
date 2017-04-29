@@ -35,25 +35,23 @@ router.get('/logout', function(req, res) {
     res.redirect('/');
 });
 
-router.get('/bots', (req, res) => {
-    Bot.find().sort({ id: 1 }).exec()
-      .then(results => res.json(results.map(bot => bot.id)))
-      .catch(console.log);
-})
-
-router.get('/bots/:id', (req, res) => {
-  const id = req.params.id;
-  Bot.findOne({ id }).exec()
-    .then(result => {
-      const bot = manager.updateBot(result.toObject());
-      return Event.findOne({ botId: id }).sort({ $natural: -1 }).exec()
-        .then(event => {
-          if (event)
-            bot.lastEvent = event;
-          res.json(bot);
-        });
-    }).catch(console.log);
-})
+router.post('/bots', (req, res) => {
+  const query = {};
+  if (req.body.id) query.id = req.body.id;
+  Bot.find(query).sort({ id: 1 }).exec()
+    .then(results => {
+      bots = [];
+      results.forEach(result => {
+        const bot = manager.updateBot(result.toObject());
+        Event.findOne({ botId: bot.id }).sort({ $natural: -1 }).exec()
+          .then(event => {
+            if (event) bot.lastEvent = event;
+            bots.push(bot);
+            if (bots.length === results.length) res.json(bots);
+          })
+    })
+  }).catch(console.log);
+});
 
 router.post('/run/:id', (req, res) => {
   const id = req.params.id;
@@ -81,7 +79,7 @@ router.post('/toggle/:id', (req, res) => {
 
 router.post('/update/:id', (req, res) => {
   const id = req.params.id;
-  Bot.findOne({id}).exec()
+  Bot.findOne({ id }).exec()
     .then(bot => {
       const params = {};
       _.forIn(req.body, (value, key) => {
@@ -99,7 +97,7 @@ router.post('/update/:id', (req, res) => {
 
 router.post('/edit/:id', (req, res) => {
   const id = req.params.id;
-  Bot.findOne({id}).exec()
+  Bot.findOne({ id }).exec()
     .then(bot => {
       bot.configure = true;
       bot.save()
