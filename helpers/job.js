@@ -67,16 +67,18 @@ function runBot(path, initData) {
             botId: id,
             date: message.date
           }
-          if (message.content.tweet)
+          if (message.content.tweet) {
             eventData.tweet = message.content.tweet.data.id_str;
-          if (message.content.error) {
+            saveEvent(eventData);
+          }
+          else if (message.content.error) {
             console.log(`${id} error: ${message.content.error}`);
             eventData.error = message.content.error;
             bot.kill()
+            saveEvent(eventData);
+          } else {
+            console.log(message.content);
           }
-          saveEvent(eventData);
-        } else {
-          console.log(message);
         }
       }
     })
