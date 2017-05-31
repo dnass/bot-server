@@ -7,7 +7,7 @@ class Job {
     const botData = bots[id];
     this.id = id;
     this.interval = once ? false : botData.interval;
-    this.botPath = __dirname + '/../bots/' + this.id + '/' + botData.main;
+    this.botPath = `${__dirname}/../bots/${this.id}/${botData.main}`;
     this.initData = {
       id: botData.id,
       params: botData.params,
@@ -16,7 +16,7 @@ class Job {
     this.running = false;
     this.lastRun = null;
     this.loop = null;
-    console.log(this.id + ': Job created for bot');
+    console.log(`${this.id}: job created for bot`);
   }
 
    run() {
@@ -25,14 +25,14 @@ class Job {
       const self = this;
       if (this.interval) {
         this.lastRun = new Date();
-        console.log(this.id + ': Starting run loop');
+        console.log(`${this.id}: starting run loop`);
         this.loop = setInterval(function () {
-          console.log(self.id + ': Running bot');
+          console.log(`${this.id}: running bot`);
           self.lastRun = new Date();
           runBot(self.botPath, self.initData);
         }, this.interval * 60000);
       } else {
-        console.log(this.id + ': Running bot once');
+        console.log(`${this.id}: running bot once`);
         runBot(self.botPath, self.initData);
       }
     }
@@ -40,7 +40,7 @@ class Job {
 
   stop() {
     if (this.running) {
-      console.log(this.id + ': Bot stopped');
+      console.log(`${this.id}: bot stopped`);
       clearInterval(this.loop);
       this.loop = null;
       this.running = false;
@@ -58,10 +58,7 @@ function runBot(path, initData) {
       if (msg !== '') {
         const message = JSON.parse(msg);
         if (typeof message.content === 'string')
-          if (message.content === 'kill')
-            bot.kill()
-          else
-            console.log(`${id}: ${message.content}`)
+          console.log(`${id}: ${message.content}`)
         else if (typeof message.content === 'object') {
           const eventData = {
             botId: id,
@@ -76,8 +73,10 @@ function runBot(path, initData) {
             eventData.error = message.content.error;
             bot.kill()
             saveEvent(eventData);
+          } else if (message.content.done) {
+            bot.kill();
           } else {
-            console.log(message.content);
+            console.log(`${id}: ${message.content}`);
           }
         }
       }
@@ -87,7 +86,7 @@ function runBot(path, initData) {
     console.log(data.toString());
   })
   bot.on('exit', () => {
-    console.log(id + ': bot exited')
+    console.log(`${id}: bot exited`)
   })
   bot.stdin.write(JSON.stringify(initData))
 }
@@ -96,7 +95,7 @@ function saveEvent(data) {
   const event = Event(data);
   event.save()
     .catch(console.log);
-  console.log(data.botId + ': Event saved in database');
+  console.log(`${data.botId}: event saved in database`);
 }
 
 module.exports = Job
