@@ -17,6 +17,7 @@ class Job {
     this.lastRun = null;
     this.loop = null;
     console.log(`${this.id}: job created for bot`);
+    console.log(this.id + ': Job created for bot');
   }
 
    run() {
